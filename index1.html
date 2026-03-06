@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NoireEris // KI Daily</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&family=Exo+2:wght@300;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --neon: #39FF14; --cyan: #00CFFF; --purple: #9D4EDD;
+    --gold: #FFD700; --deepspace: #1a1a4e; --dark: #050505;
+    --panel: #0D0D0D; --text: #AAAAAA;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--dark); color:var(--text); font-family:'Exo 2',sans-serif; min-height:100vh; padding:16px; overflow-x:hidden; }
+  body::before { content:''; position:fixed; top:0;left:0;right:0;bottom:0; background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(57,255,20,0.012) 2px,rgba(57,255,20,0.012) 4px); pointer-events:none; z-index:1000; }
+  header { text-align:center; margin-bottom:20px; padding-bottom:14px; border-bottom:1px solid #1a1a1a; position:relative; }
+  header::after { content:''; position:absolute; bottom:-1px;left:0;right:0; height:2px; background:linear-gradient(to right,var(--neon) 0%,var(--neon) 33%,var(--purple) 33%,var(--purple) 66%,var(--gold) 66%,var(--gold) 100%); }
+  .logo { font-family:'Bebas Neue',sans-serif; font-size:2.4rem; background:linear-gradient(135deg,#3a3a8e 0%,#6666cc 40%,#FFD700 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; letter-spacing:6px; animation:shimmer 4s ease-in-out infinite; }
+  @keyframes shimmer { 0%,100%{filter:drop-shadow(0 0 12px rgba(255,215,0,0.3))} 50%{filter:drop-shadow(0 0 22px rgba(255,215,0,0.6))} }
+  .tagline { font-family:'Share Tech Mono',monospace; font-size:0.65rem; color:#333; letter-spacing:4px; margin-top:4px; }
+  .date-display { font-family:'Share Tech Mono',monospace; font-size:0.72rem; color:var(--gold); margin-top:6px; opacity:0.7; }
+  .color-legend { display:flex; gap:8px; justify-content:center; margin-bottom:18px; flex-wrap:wrap; }
+  .legend-item { font-family:'Share Tech Mono',monospace; font-size:0.58rem; letter-spacing:1px; padding:4px 10px; border-radius:3px; border:1px solid; }
+  .legend-ipw { color:var(--neon); border-color:rgba(57,255,20,0.3); background:rgba(57,255,20,0.05); }
+  .legend-dpa { color:var(--purple); border-color:rgba(157,78,221,0.3); background:rgba(157,78,221,0.05); }
+  .legend-ki { color:var(--gold); border-color:rgba(255,215,0,0.3); background:rgba(26,26,78,0.4); }
+  .section { margin-bottom:20px; }
+  .section-title { font-family:'Bebas Neue',sans-serif; font-size:1rem; letter-spacing:3px; margin-bottom:10px; display:flex; align-items:center; gap:8px; padding:6px 10px; border-radius:4px; }
+  .section-title::after { content:''; flex:1; height:1px; background:currentColor; opacity:0.2; }
+  .daily .section-title { color:var(--neon); background:rgba(57,255,20,0.05); border-left:3px solid var(--neon); }
+  .daily .link-card { border-color:rgba(57,255,20,0.15); }
+  .daily .link-card:hover { border-color:var(--neon); box-shadow:0 0 14px rgba(57,255,20,0.15); }
+  .daily .badge { background:rgba(57,255,20,0.12); color:var(--neon); }
+  .important .section-title { color:var(--cyan); background:rgba(0,207,255,0.05); border-left:3px solid var(--cyan); }
+  .important .link-card { border-color:rgba(0,207,255,0.15); }
+  .important .link-card:hover { border-color:var(--cyan); box-shadow:0 0 14px rgba(0,207,255,0.15); }
+  .important .badge { background:rgba(0,207,255,0.12); color:var(--cyan); }
+  .ki-module .section-title { color:var(--gold); background:linear-gradient(to right,rgba(26,26,78,0.6),rgba(26,26,78,0.1)); border-left:3px solid var(--gold); }
+  .ki-module .link-card { border-color:rgba(255,215,0,0.15); background:linear-gradient(to right,rgba(26,26,78,0.25),var(--panel)); }
+  .ki-module .link-card:hover { border-color:var(--gold); box-shadow:0 0 14px rgba(255,215,0,0.15); }
+  .ki-module .badge { background:rgba(255,215,0,0.12); color:var(--gold); }
+  .dpa .section-title { color:var(--purple); background:rgba(157,78,221,0.05); border-left:3px solid var(--purple); }
+  .dpa .link-card { border-color:rgba(157,78,221,0.15); }
+  .dpa .link-card:hover { border-color:var(--purple); box-shadow:0 0 14px rgba(157,78,221,0.15); }
+  .dpa .badge { background:rgba(157,78,221,0.12); color:var(--purple); }
+  .link-grid { display:flex; flex-direction:column; gap:7px; }
+  .link-card { background:var(--panel); border:1px solid; border-radius:5px; padding:11px 13px; text-decoration:none; display:flex; align-items:center; gap:11px; transition:all 0.2s ease; position:relative; overflow:hidden; }
+  .link-card::before { content:''; position:absolute; left:0;top:0;bottom:0; width:2px; background:currentColor; opacity:0; transition:opacity 0.2s; }
+  .link-card:hover::before { opacity:1; }
+  .link-icon { font-size:1.3rem; flex-shrink:0; width:30px; text-align:center; }
+  .link-info { flex:1; min-width:0; }
+  .link-name { font-weight:600; font-size:0.88rem; color:#FFF; display:block; margin-bottom:2px; }
+  .link-desc { font-size:0.7rem; color:#555; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .badge { font-family:'Share Tech Mono',monospace; font-size:0.58rem; padding:3px 7px; border-radius:3px; letter-spacing:1px; flex-shrink:0; }
+  .arrow { color:#2a2a2a; font-size:0.8rem; flex-shrink:0; }
+  .check-header { font-family:'Share Tech Mono',monospace; font-size:0.62rem; color:#333; letter-spacing:2px; margin-bottom:8px; }
+  .checklist { display:flex; gap:7px; flex-wrap:wrap; margin-bottom:12px; }
+  .check-item { background:var(--panel); border:1px solid #1a1a1a; border-radius:3px; padding:5px 11px; font-family:'Share Tech Mono',monospace; font-size:0.6rem; color:#333; cursor:pointer; transition:all 0.2s; letter-spacing:1px; user-select:none; }
+  .check-item.done { border-color:var(--gold); color:var(--gold); background:rgba(26,26,78,0.3); }
+  .check-item.done::before { content:'✓ '; }
+  .progress-bar { height:2px; background:#111; border-radius:1px; margin-bottom:18px; overflow:hidden; }
+  .progress-fill { height:100%; background:linear-gradient(to right,var(--neon),var(--cyan),var(--gold)); border-radius:1px; transition:width 0.4s ease; width:0%; }
+  footer { text-align:center; margin-top:28px; padding-top:14px; border-top:1px solid #0f0f0f; }
+  .motto { font-family:'Bebas Neue',sans-serif; font-size:1.3rem; letter-spacing:6px; color:#1a1a1a; }
+  .m-neon { color:var(--neon); } .m-gold { color:var(--gold); }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">NOIREERIS // KI DAILY</div>
+  <div class="tagline">12:00 CHECK-IN // TÄGLICH</div>
+  <div class="date-display" id="dateDisplay"></div>
+</header>
+<div class="color-legend">
+  <div class="legend-item legend-ipw">⚡ IPW — NEON</div>
+  <div class="legend-item legend-dpa">🔮 DPA — LILA</div>
+  <div class="legend-item legend-ki">🌌 KI — DEEP SPACE</div>
+</div>
+<div class="check-header">HEUTE GECHECKT:</div>
+<div class="checklist" id="checklist">
+  <div class="check-item" onclick="toggleCheck(this)">RUNDOWN</div>
+  <div class="check-item" onclick="toggleCheck(this)">ANTHROPIC</div>
+  <div class="check-item" onclick="toggleCheck(this)">GOOGLE AI</div>
+  <div class="check-item" onclick="toggleCheck(this)">EU AI ACT</div>
+  <div class="check-item" onclick="toggleCheck(this)">MAKE.COM</div>
+  <div class="check-item" onclick="toggleCheck(this)">SUPABASE</div>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<div class="section daily">
+  <div class="section-title">⚡ TÄGLICH CHECKEN</div>
+  <div class="link-grid">
+    <a class="link-card" href="https://www.therundown.ai" target="_blank">
+      <div class="link-icon">📰</div>
+      <div class="link-info"><span class="link-name">The Rundown AI</span><span class="link-desc">therundown.ai — täglich, kurz, auf den Punkt</span></div>
+      <div class="badge">TÄGLICH</div><div class="arrow">→</div>
+    </a>
+    <a class="link-card" href="https://www.anthropic.com/news" target="_blank">
+      <div class="link-icon">🤖</div>
+      <div class="link-info"><span class="link-name">Anthropic News</span><span class="link-desc">anthropic.com/news — Claude Updates direkt</span></div>
+      <div class="badge">TÄGLICH</div><div class="arrow">→</div>
+    </a>
+    <a class="link-card" href="https://ai.googleblog.com" target="_blank">
+      <div class="link-icon">🔍</div>
+      <div class="link-info"><span class="link-name">Google AI Blog</span><span class="link-desc">ai.googleblog.com — Gemini & Co Updates</span></div>
+      <div class="badge">TÄGLICH</div><div class="arrow">→</div>
+    </a>
+  </div>
+</div>
+
+<div class="section important">
+  <div class="section-title">🎯 WICHTIGE THEMEN</div>
+  <div class="link-grid">
+    <a class="link-card" href="https://artificialintelligenceact.eu/de" target="_blank">
+      <div class="link-icon">⚖️</div>
+      <div class="link-info"><span class="link-name">EU AI Act Explorer</span><span class="link-desc">artificialintelligenceact.eu — verständlich, auf DE</span></div>
+      <div class="badge">PFLICHT</div><div class="arrow">→</div>
+    </a>
+    <a class="link-card" href="https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689" target="_blank">
+      <div class="link-icon">📜</div>
+      <div class="link-info"><span class="link-name">EU AI Act Volltext</span><span class="link-desc">EUR-Lex — offizieller Gesetzestext DE</span></div>
+      <div class="badge">RECHT</div><div class="arrow">→</div>
+    </a>
+    <a class="link-card" href="https://www.make.com/en/release-notes" target="_blank">
+      <div class="link-icon">⚙️</div>
+      <div class="link-info"><span class="link-name">Make.com Release Notes</span><span class="link-desc">make.com — Breaking Changes prüfen</span></div>
+      <div class="badge">WÖCHENTLICH</div><div class="arrow">→</div>
+    </a>
+  </div>
+</div>
+
+<div class="section ki-module">
+  <div class="section-title">🌌 KI & PROGRAMMIERUNG</div>
+  <div class="link-grid">
+    <a class="link-card" href="https://supabase.com/docs" target="_blank">
+      <div class="link-icon">🗄️</div>
+      <div class="link-info"><span class="link-name">Supabase Docs</span><span class="link-desc">supabase.com/docs — Backend für IPW + DPA</span></div>
+      <div class="badge">BALD</div><div class="arrow">→</div>
+    </a>
+    <a class="link-card" href="https://ollama.ai" target="_blank">
+      <div class="link-icon">🦙</div>
+      <div class="link-info"><span class="link-name">Ollama — Local AI</span><span class="link-desc">ollama.ai — KI lokal, offline, privat</span></div>
+      <div class="badge">ERKUNDEN</div><div class="arrow">→</div>
+    </a>
+    <a class="link-card" href="https://grow.google/certificates/ai-essentials" target="_blank">
+      <div class="link-icon">🎓</div>
+      <div class="link-info"><span class="link-name">Google AI Essentials</span><span class="link-desc">grow.google — kostenlos, gut für Lebenslauf</span></div>
+      <div class="badge">GRATIS</div><div class="arrow">→</div>
+    </a>
+    <a class="link-card" href="https://docs.anthropic.com" target="_blank">
+      <div class="link-icon">🐺</div>
+      <div class="link-info"><span class="link-name">Claude API Docs</span><span class="link-desc">docs.anthropic.com — neue Features, API Updates</span></div>
+      <div class="badge">CLAUDE</div><div class="arrow">→</div>
+    </a>
+  </div>
+</div>
+
+<div class="section dpa">
+  <div class="section-title">🔮 DPA / PERSÖNLICH</div>
+  <div class="link-grid">
+    <a class="link-card" href="https://noireeris-organized-plantchaos.de" target="_blank">
+      <div class="link-icon">🌱</div>
+      <div class="link-info"><span class="link-name">NoireEris Pflanzensystem</span><span class="link-desc">noireeris-organized-plantchaos.de — deine Pflanzen</span></div>
+      <div class="badge">DEIN SYSTEM</div><div class="arrow">→</div>
+    </a>
+    <a class="link-card" href="https://sempervivumliste.de" target="_blank">
+      <div class="link-icon">🌿</div>
+      <div class="link-info"><span class="link-name">Sempervivumliste.de</span><span class="link-desc">Sortenabgleich + neue Sorten entdecken</span></div>
+      <div class="badge">PFLANZEN</div><div class="arrow">→</div>
+    </a>
+  </div>
+</div>
+
+<footer>
+  <div class="motto"><span class="m-neon">WISSEN</span> IST <span class="m-gold">MACHT</span> 🐺</div>
+</footer>
+
+<script>
+  const d = new Date();
+  document.getElementById('dateDisplay').textContent = d.toLocaleDateString('de-DE',{weekday:'long',year:'numeric',month:'long',day:'numeric'}).toUpperCase();
+  function toggleCheck(el){el.classList.toggle('done');const items=document.querySelectorAll('.check-item');const done=document.querySelectorAll('.check-item.done').length;document.getElementById('progressFill').style.width=(done/items.length*100)+'%';}
+</script>
+</body>
+</html>
